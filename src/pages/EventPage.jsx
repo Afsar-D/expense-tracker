@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { currency, formatCategory } from "../lib/format";
 import { hydrateStateFromCloud, loadState, persistState } from "../lib/storage";
@@ -37,6 +37,8 @@ function EventPage() {
   const [budgetEditValue, setBudgetEditValue] = useState("");
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [showIncomeModal, setShowIncomeModal] = useState(false);
+  const [expandedExpenseId, setExpandedExpenseId] = useState(null);
+  const [expandedIncomeId, setExpandedIncomeId] = useState(null);
 
   const activeEvent = useMemo(() => state.events.find((eventItem) => eventItem.id === id), [state.events, id]);
 
@@ -128,6 +130,18 @@ function EventPage() {
     const matchesSearch = !query || expense.paidBy.toLowerCase().includes(query) || expense.notes.toLowerCase().includes(query);
     return matchesCategory && matchesSearch;
   });
+
+  useEffect(() => {
+    if (expandedExpenseId && !filteredExpenses.some((expense) => expense.id === expandedExpenseId)) {
+      setExpandedExpenseId(null);
+    }
+  }, [expandedExpenseId, filteredExpenses]);
+
+  useEffect(() => {
+    if (expandedIncomeId && !eventIncomes.some((income) => income.id === expandedIncomeId)) {
+      setExpandedIncomeId(null);
+    }
+  }, [expandedIncomeId, eventIncomes]);
 
   const saveBudget = (event) => {
     event.preventDefault();
@@ -471,35 +485,64 @@ function EventPage() {
             )}
 
             <div className="table-wrap income-table-wrap">
-              <table>
+              <table className="compact-table">
                 <thead>
                   <tr>
                     <th>Date</th>
                     <th>Source</th>
-                    <th>Notes</th>
                     <th>Amount</th>
-                    <th>Action</th>
+                    <th>Details</th>
                   </tr>
                 </thead>
                 <tbody>
                   {!eventIncomes.length && (
                     <tr>
-                      <td colSpan="5" className="empty">No income added yet for this event.</td>
+                      <td colSpan="4" className="empty">No income added yet for this event.</td>
                     </tr>
                   )}
-                  {eventIncomes.map((income) => (
-                    <tr key={income.id}>
-                      <td data-label="Date">{income.date}</td>
-                      <td data-label="Source">{income.source}</td>
-                      <td data-label="Notes">{income.notes || "-"}</td>
-                      <td data-label="Amount" className="amount">{currency(income.amount)}</td>
-                      <td data-label="Action">
-                        <button className="btn ghost small" type="button" onClick={() => deleteIncome(income.id)}>
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {eventIncomes.map((income) => {
+                    const isExpanded = expandedIncomeId === income.id;
+                    return (
+                      <Fragment key={income.id}>
+                        <tr
+                          className={`transaction-row ${isExpanded ? "expanded" : ""}`}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setExpandedIncomeId((prev) => (prev === income.id ? null : income.id))}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              setExpandedIncomeId((prev) => (prev === income.id ? null : income.id));
+                            }
+                          }}
+                        >
+                          <td data-label="Date">{income.date}</td>
+                          <td data-label="Source">{income.source}</td>
+                          <td data-label="Amount" className="amount">{currency(income.amount)}</td>
+                          <td data-label="Details">{isExpanded ? "Hide" : "View"}</td>
+                        </tr>
+                        {isExpanded && (
+                          <tr className="transaction-detail-row">
+                            <td colSpan="4" className="transaction-detail" data-label="Details">
+                              <div className="transaction-meta">
+                                <p><strong>Notes:</strong> {income.notes || "-"}</p>
+                                <button
+                                  className="btn ghost small"
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    deleteIncome(income.id);
+                                  }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -616,37 +659,66 @@ function EventPage() {
           </div>
 
           <div className="table-wrap">
-            <table>
+            <table className="compact-table">
               <thead>
                 <tr>
                   <th>Date</th>
                   <th>Category</th>
                   <th>Paid By</th>
-                  <th>Notes</th>
                   <th>Amount</th>
-                  <th>Action</th>
+                  <th>Details</th>
                 </tr>
               </thead>
               <tbody>
                 {!filteredExpenses.length && (
                   <tr>
-                    <td colSpan="6" className="empty">No expenses yet for this event.</td>
+                    <td colSpan="5" className="empty">No expenses yet for this event.</td>
                   </tr>
                 )}
-                {filteredExpenses.map((expense) => (
-                  <tr key={expense.id}>
-                    <td data-label="Date">{expense.date}</td>
-                    <td data-label="Category">{formatCategory(expense.category)}</td>
-                    <td data-label="Paid By">{expense.paidBy}</td>
-                    <td data-label="Notes">{expense.notes || "-"}</td>
-                    <td data-label="Amount" className="amount">{currency(expense.amount)}</td>
-                    <td data-label="Action">
-                      <button className="btn ghost small" type="button" onClick={() => deleteExpense(expense.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {filteredExpenses.map((expense) => {
+                  const isExpanded = expandedExpenseId === expense.id;
+                  return (
+                    <Fragment key={expense.id}>
+                      <tr
+                        className={`transaction-row ${isExpanded ? "expanded" : ""}`}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setExpandedExpenseId((prev) => (prev === expense.id ? null : expense.id))}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            setExpandedExpenseId((prev) => (prev === expense.id ? null : expense.id));
+                          }
+                        }}
+                      >
+                        <td data-label="Date">{expense.date}</td>
+                        <td data-label="Category">{formatCategory(expense.category)}</td>
+                        <td data-label="Paid By">{expense.paidBy}</td>
+                        <td data-label="Amount" className="amount">{currency(expense.amount)}</td>
+                        <td data-label="Details">{isExpanded ? "Hide" : "View"}</td>
+                      </tr>
+                      {isExpanded && (
+                        <tr className="transaction-detail-row">
+                          <td colSpan="5" className="transaction-detail" data-label="Details">
+                            <div className="transaction-meta">
+                              <p><strong>Notes:</strong> {expense.notes || "-"}</p>
+                              <button
+                                className="btn ghost small"
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  deleteExpense(expense.id);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
