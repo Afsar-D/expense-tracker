@@ -771,35 +771,7 @@ td {
   }
 
   .table-wrap .compact-table {
-    min-width: 620px;
-  }
-
-  .table-wrap .compact-table thead {
-    display: table-header-group;
-  }
-
-  .table-wrap .compact-table tbody {
-    display: table-row-group;
-  }
-
-  .table-wrap .compact-table tr {
-    display: table-row;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-  }
-
-  .table-wrap .compact-table td {
-    display: table-cell;
-    width: auto;
-    border-bottom: 1px solid var(--line-soft);
-    padding: 0.52rem 0.5rem;
-    text-align: left;
-  }
-
-  .table-wrap .compact-table td::before {
-    content: none;
+    min-width: 100%;
   }
 
   .transaction-detail {
