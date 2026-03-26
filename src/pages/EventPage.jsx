@@ -219,6 +219,11 @@ function EventPage() {
   };
 
   const removeMember = (memberToRemove) => {
+    const shouldRemove = window.confirm(`Remove member "${memberToRemove}" from this event?`);
+    if (!shouldRemove) {
+      return;
+    }
+
     updateState((prev) => ({
       ...prev,
       events: prev.events.map((eventItem) =>
