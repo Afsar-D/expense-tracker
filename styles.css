@@ -772,37 +772,58 @@ td {
   }
 
   .table-wrap .compact-table {
-    min-width: 620px;
-    table-layout: fixed;
+    min-width: 100%;
   }
 
-  .table-wrap .compact-table thead {
-    display: table-header-group;
+  .table-wrap .compact-table tr.transaction-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    margin-bottom: 0.45rem;
+    padding: 0.55rem 0.65rem;
+    background: rgba(255, 255, 255, 0.06);
   }
 
-  .table-wrap .compact-table tbody {
-    display: table-row-group;
+  .table-wrap .compact-table tr.transaction-row td {
+    display: block;
+    width: auto;
+    border-bottom: 0;
+    padding: 0;
+    text-align: left;
   }
 
-  .table-wrap .compact-table tr {
-    display: table-row;
+  .table-wrap .compact-table tr.transaction-row td::before {
+    content: none;
+  }
+
+  .table-wrap .compact-table td.amount,
+  .table-wrap .compact-table tr.transaction-row td:last-child {
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .table-wrap .compact-table tr.transaction-detail-row {
+    display: block;
     border: 0;
-    border-radius: 0;
-    margin-bottom: 0;
+    margin: -0.35rem 0 0.7rem;
     padding: 0;
     background: transparent;
   }
 
-  .table-wrap .compact-table td,
-  .table-wrap .compact-table th {
-    display: table-cell;
-    width: auto;
-    border-bottom: 1px solid var(--line-soft);
+  .table-wrap .compact-table tr.transaction-detail-row td {
+    display: block;
+    border: 1px solid var(--line-soft);
+    border-top: 0;
+    border-radius: 0 0 12px 12px;
+    padding: 0.55rem 0.65rem;
     text-align: left;
-    vertical-align: middle;
   }
 
-  .table-wrap .compact-table td::before {
+  .table-wrap .compact-table tr.transaction-detail-row td::before,
+  .table-wrap .compact-table td.empty::before {
     content: none;
   }
 
