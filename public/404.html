@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script type="text/javascript">
+      // Get the path after the domain
+      const path = window.location.pathname;
+      const base = '/expense-tracker/';
+      
+      // Redirect to index.html with the path preserved
+      if (path !== base && !path.includes('.')) {
+        window.location.replace(base + '#' + path.slice(base.length));
+      } else {
+        window.location.replace(base);
+      }
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
