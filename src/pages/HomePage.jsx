@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { currency, parseMembers } from "../lib/format";
-import { loadState, persistState } from "../lib/storage";
+import { hydrateStateFromCloud, loadState, persistState } from "../lib/storage";
 
 const MOBILE_BREAKPOINT = 900;
 
@@ -128,6 +128,10 @@ function HomePage() {
 
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    hydrateStateFromCloud(setState);
   }, []);
 
   useEffect(() => {

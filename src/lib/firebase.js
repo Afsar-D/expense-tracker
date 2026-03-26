@@ -3,14 +3,8 @@ import {
   getFirestore,
   doc,
   setDoc,
-  getDoc,
-  connectFirestoreEmulator
+  getDoc
 } from "firebase/firestore";
-import {
-  getAuth,
-  signInAnonymously,
-  connectAuthEmulator
-} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBENwDxdZP3IQYu6wL7XiopjH4kDPS_sOQ",
@@ -24,31 +18,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Auth
-const auth = getAuth(app);
-
 // Initialize Firestore
 const db = getFirestore(app);
 
-// Sign in anonymously
-export async function initializeUser() {
-  try {
-    if (!auth.currentUser) {
-      await signInAnonymously(auth);
-    }
-    return auth.currentUser;
-  } catch (error) {
-    console.error("Failed to sign in anonymously:", error);
-    throw error;
-  }
-}
+const SHARED_DOC_REF = doc(db, "appState", "shared");
 
 // Save data to Firestore
 export async function saveToFirebase(data) {
   try {
-    const user = await initializeUser();
-    const userDocRef = doc(db, "users", user.uid);
-    await setDoc(userDocRef, { data, lastUpdated: new Date() });
+    await setDoc(SHARED_DOC_REF, { data, lastUpdated: new Date().toISOString() });
     return true;
   } catch (error) {
     console.error("Failed to save to Firebase:", error);
@@ -59,9 +37,7 @@ export async function saveToFirebase(data) {
 // Load data from Firestore
 export async function loadFromFirebase() {
   try {
-    const user = await initializeUser();
-    const userDocRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userDocRef);
+    const docSnap = await getDoc(SHARED_DOC_REF);
     
     if (docSnap.exists()) {
       return docSnap.data().data;
@@ -74,4 +50,4 @@ export async function loadFromFirebase() {
   }
 }
 
-export { auth, db };
+export { db };

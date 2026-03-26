@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { currency, formatCategory } from "../lib/format";
-import { loadState, persistState } from "../lib/storage";
+import { hydrateStateFromCloud, loadState, persistState } from "../lib/storage";
 
 const BASE_CATEGORIES = ["transport", "stay", "food", "tickets", "misc"];
 const MOBILE_BREAKPOINT = 900;
@@ -55,6 +55,10 @@ function EventPage() {
 
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    hydrateStateFromCloud(setState);
   }, []);
 
   useEffect(() => {
