@@ -5,6 +5,13 @@ import {
   setDoc,
   getDoc
 } from "firebase/firestore";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBENwDxdZP3IQYu6wL7XiopjH4kDPS_sOQ",
@@ -20,13 +27,40 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
-const SHARED_DOC_REF = doc(db, "appState", "shared");
+function getUserStateDoc(uid) {
+  return doc(db, "users", uid, "app", "state");
+}
+
+export function subscribeAuthState(callback) {
+  return onAuthStateChanged(auth, callback);
+}
+
+export async function signInWithGoogle() {
+  const result = await signInWithPopup(auth, googleProvider);
+  return result.user;
+}
+
+export async function signOutUser() {
+  await signOut(auth);
+}
+
+function getCurrentUserOrThrow() {
+  if (!auth.currentUser) {
+    throw new Error("Authentication required.");
+  }
+
+  return auth.currentUser;
+}
 
 // Save data to Firestore
 export async function saveToFirebase(data) {
   try {
-    await setDoc(SHARED_DOC_REF, { data, lastUpdated: new Date().toISOString() });
+    const user = getCurrentUserOrThrow();
+    const docRef = getUserStateDoc(user.uid);
+    await setDoc(docRef, { data, lastUpdated: new Date().toISOString() }, { merge: true });
     return true;
   } catch (error) {
     console.error("Failed to save to Firebase:", error);
@@ -37,7 +71,9 @@ export async function saveToFirebase(data) {
 // Load data from Firestore
 export async function loadFromFirebase() {
   try {
-    const docSnap = await getDoc(SHARED_DOC_REF);
+    const user = getCurrentUserOrThrow();
+    const docRef = getUserStateDoc(user.uid);
+    const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
       return docSnap.data().data;
@@ -50,4 +86,4 @@ export async function loadFromFirebase() {
   }
 }
 
-export { db };
+export { auth, db };

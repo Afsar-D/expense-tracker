@@ -63,6 +63,10 @@ export function loadState() {
   }
 }
 
+export function clearLocalStateCache() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
 export async function hydrateStateFromCloud(setState) {
   if (hydratePromise) {
     return hydratePromise;
@@ -86,6 +90,10 @@ export async function hydrateStateFromCloud(setState) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
     setState(normalized);
   } catch (error) {
+    if (error?.message === "Authentication required.") {
+      return;
+    }
+
     console.warn("Failed to load cloud state:", error);
   } finally {
     hydratePromise = null;
@@ -101,6 +109,10 @@ export function persistState(nextState) {
   // Also save to Firebase in the background (non-blocking)
   import("./firebase.js").then(({ saveToFirebase }) => {
     saveToFirebase(nextState).catch(error => {
+      if (error?.message === "Authentication required.") {
+        return;
+      }
+
       console.warn("Failed to sync to Firebase:", error);
       // Still works locally even if Firebase sync fails
     });
