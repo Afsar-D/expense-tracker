@@ -1,8 +1,18 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
 import HomePage from "./pages/HomePage";
 import EventPage from "./pages/EventPage";
+import { initializeUser } from "./lib/firebase";
 
 function App() {
+  useEffect(() => {
+    // Initialize Firebase on app startup
+    initializeUser().catch(error => {
+      console.warn("Firebase initialization failed:", error);
+      // App still works with localStorage if Firebase fails
+    });
+  }, []);
+
   return (
     <>
       <div className="aurora aurora-a"></div>

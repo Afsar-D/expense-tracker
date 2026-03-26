@@ -53,4 +53,12 @@ export function loadState() {
 
 export function persistState(nextState) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+  
+  // Also save to Firebase in the background (non-blocking)
+  import("./firebase.js").then(({ saveToFirebase }) => {
+    saveToFirebase(nextState).catch(error => {
+      console.warn("Failed to sync to Firebase:", error);
+      // Still works locally even if Firebase sync fails
+    });
+  });
 }
