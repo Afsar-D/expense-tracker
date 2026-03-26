@@ -1,7 +1,12 @@
 export const STORAGE_KEY = "expense-atlas-v1";
+let hydratePromise = null;
 
 function emptyState() {
   return { events: [], expenses: [], incomes: [] };
+}
+
+function hasAnyData(state) {
+  return state.events.length > 0 || state.expenses.length > 0 || state.incomes.length > 0;
 }
 
 function normalizeState(parsed) {
@@ -59,11 +64,21 @@ export function loadState() {
 }
 
 export async function hydrateStateFromCloud(setState) {
+  if (hydratePromise) {
+    return hydratePromise;
+  }
+
+  hydratePromise = (async () => {
   try {
-    const { loadFromFirebase } = await import("./firebase.js");
+    const localState = loadState();
+    const { loadFromFirebase, saveToFirebase } = await import("./firebase.js");
     const cloudState = await loadFromFirebase();
 
     if (!cloudState) {
+      // First-time cloud setup: upload existing local data so other devices can read it.
+      if (hasAnyData(localState)) {
+        await saveToFirebase(localState);
+      }
       return;
     }
 
@@ -72,7 +87,12 @@ export async function hydrateStateFromCloud(setState) {
     setState(normalized);
   } catch (error) {
     console.warn("Failed to load cloud state:", error);
+  } finally {
+    hydratePromise = null;
   }
+  })();
+
+  return hydratePromise;
 }
 
 export function persistState(nextState) {
