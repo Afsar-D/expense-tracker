@@ -475,6 +475,26 @@ td {
   font-size: 0.84rem;
 }
 
+.compact-table {
+  table-layout: fixed;
+}
+
+.compact-table th:nth-child(2),
+.compact-table td:nth-child(2) {
+  width: 140px;
+}
+
+.compact-table th:nth-child(3),
+.compact-table td:nth-child(3) {
+  width: 88px;
+}
+
+.summary-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .transaction-row {
   cursor: pointer;
   transition: background-color 180ms var(--ease-fluid);
@@ -748,6 +768,38 @@ td {
   .table-wrap td .btn.small {
     width: auto;
     min-width: 96px;
+  }
+
+  .table-wrap .compact-table {
+    min-width: 620px;
+  }
+
+  .table-wrap .compact-table thead {
+    display: table-header-group;
+  }
+
+  .table-wrap .compact-table tbody {
+    display: table-row-group;
+  }
+
+  .table-wrap .compact-table tr {
+    display: table-row;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .table-wrap .compact-table td {
+    display: table-cell;
+    width: auto;
+    border-bottom: 1px solid var(--line-soft);
+    padding: 0.52rem 0.5rem;
+    text-align: left;
+  }
+
+  .table-wrap .compact-table td::before {
+    content: none;
   }
 
   .transaction-detail {

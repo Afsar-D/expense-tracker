@@ -488,8 +488,7 @@ function EventPage() {
               <table className="compact-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Source</th>
+                    <th>Summary</th>
                     <th>Amount</th>
                     <th>Details</th>
                   </tr>
@@ -497,7 +496,7 @@ function EventPage() {
                 <tbody>
                   {!eventIncomes.length && (
                     <tr>
-                      <td colSpan="4" className="empty">No income added yet for this event.</td>
+                      <td colSpan="3" className="empty">No income added yet for this event.</td>
                     </tr>
                   )}
                   {eventIncomes.map((income) => {
@@ -516,14 +515,13 @@ function EventPage() {
                             }
                           }}
                         >
-                          <td data-label="Date">{income.date}</td>
-                          <td data-label="Source">{income.source}</td>
+                          <td data-label="Summary" className="summary-cell">{`${income.date} • ${income.source}`}</td>
                           <td data-label="Amount" className="amount">{currency(income.amount)}</td>
                           <td data-label="Details">{isExpanded ? "Hide" : "View"}</td>
                         </tr>
                         {isExpanded && (
                           <tr className="transaction-detail-row">
-                            <td colSpan="4" className="transaction-detail" data-label="Details">
+                            <td colSpan="3" className="transaction-detail" data-label="Details">
                               <div className="transaction-meta">
                                 <p><strong>Notes:</strong> {income.notes || "-"}</p>
                                 <button
@@ -662,9 +660,7 @@ function EventPage() {
             <table className="compact-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Category</th>
-                  <th>Paid By</th>
+                  <th>Summary</th>
                   <th>Amount</th>
                   <th>Details</th>
                 </tr>
@@ -672,7 +668,7 @@ function EventPage() {
               <tbody>
                 {!filteredExpenses.length && (
                   <tr>
-                    <td colSpan="5" className="empty">No expenses yet for this event.</td>
+                    <td colSpan="3" className="empty">No expenses yet for this event.</td>
                   </tr>
                 )}
                 {filteredExpenses.map((expense) => {
@@ -691,15 +687,13 @@ function EventPage() {
                           }
                         }}
                       >
-                        <td data-label="Date">{expense.date}</td>
-                        <td data-label="Category">{formatCategory(expense.category)}</td>
-                        <td data-label="Paid By">{expense.paidBy}</td>
+                        <td data-label="Summary" className="summary-cell">{`${expense.date} • ${formatCategory(expense.category)} • ${expense.paidBy}`}</td>
                         <td data-label="Amount" className="amount">{currency(expense.amount)}</td>
                         <td data-label="Details">{isExpanded ? "Hide" : "View"}</td>
                       </tr>
                       {isExpanded && (
                         <tr className="transaction-detail-row">
-                          <td colSpan="5" className="transaction-detail" data-label="Details">
+                          <td colSpan="3" className="transaction-detail" data-label="Details">
                             <div className="transaction-meta">
                               <p><strong>Notes:</strong> {expense.notes || "-"}</p>
                               <button
