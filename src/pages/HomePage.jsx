@@ -82,17 +82,6 @@ function HomePage() {
     }
   };
 
-  const clearAllData = () => {
-    const shouldClear = window.confirm("This will remove all events, expenses, and incomes. Continue?");
-    if (!shouldClear) {
-      return;
-    }
-
-    const cleared = { events: [], expenses: [], incomes: [] };
-    persistState(cleared);
-    setState(cleared);
-  };
-
   const deleteEvent = (eventId) => {
     const shouldDelete = window.confirm("Delete this event and all of its expenses?");
     if (!shouldDelete) {
@@ -259,9 +248,6 @@ function HomePage() {
           <h1>Expense Atlas</h1>
           <p className="subhead">Plan event budgets and track spending with a liquid-glass dashboard.</p>
         </div>
-        <button onClick={clearAllData} className="btn ghost" type="button">
-          Clear Data
-        </button>
       </header>
 
       <section className="panel-grid">
