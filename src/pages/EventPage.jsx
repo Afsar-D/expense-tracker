@@ -515,7 +515,7 @@ function EventPage() {
                             }
                           }}
                         >
-                          <td data-label="Summary" className="summary-cell">{`${income.date} • ${income.source}`}</td>
+                          <td data-label="Summary"><span className="summary-cell">{`${income.date} • ${income.source}`}</span></td>
                           <td data-label="Amount" className="amount">{currency(income.amount)}</td>
                           <td data-label="Details">{isExpanded ? "Hide" : "View"}</td>
                         </tr>
@@ -687,7 +687,7 @@ function EventPage() {
                           }
                         }}
                       >
-                        <td data-label="Summary" className="summary-cell">{`${expense.date} • ${formatCategory(expense.category)} • ${expense.paidBy}`}</td>
+                        <td data-label="Summary"><span className="summary-cell">{`${expense.date} • ${formatCategory(expense.category)} • ${expense.paidBy}`}</span></td>
                         <td data-label="Amount" className="amount">{currency(expense.amount)}</td>
                         <td data-label="Details">{isExpanded ? "Hide" : "View"}</td>
                       </tr>

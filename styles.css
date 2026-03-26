@@ -490,6 +490,7 @@ td {
 }
 
 .summary-cell {
+  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -771,7 +772,38 @@ td {
   }
 
   .table-wrap .compact-table {
-    min-width: 100%;
+    min-width: 620px;
+    table-layout: fixed;
+  }
+
+  .table-wrap .compact-table thead {
+    display: table-header-group;
+  }
+
+  .table-wrap .compact-table tbody {
+    display: table-row-group;
+  }
+
+  .table-wrap .compact-table tr {
+    display: table-row;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .table-wrap .compact-table td,
+  .table-wrap .compact-table th {
+    display: table-cell;
+    width: auto;
+    border-bottom: 1px solid var(--line-soft);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .table-wrap .compact-table td::before {
+    content: none;
   }
 
   .transaction-detail {
