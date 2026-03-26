@@ -4,19 +4,29 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script type="text/javascript">
-      // Get the path after the domain
-      const path = window.location.pathname;
-      const base = '/expense-tracker/';
+      var path = window.location.pathname;
+      var base = '/expense-tracker';
       
-      // Redirect to index.html with the path preserved
-      if (path !== base && !path.includes('.')) {
-        window.location.replace(base + '#' + path.slice(base.length));
+      // Remove /expense-tracker from the path if it exists
+      if (path.startsWith(base)) {
+        path = path.slice(base.length);
+      }
+      
+      // Remove trailing slash if it exists
+      if (path.endsWith('/')) {
+        path = path.slice(0, -1);
+      }
+      
+      // Redirect to hash-based route
+      if (path && path !== '') {
+        // Convert path to hash route
+        window.location.replace(base + '/#' + path);
       } else {
-        window.location.replace(base);
+        // Go to home
+        window.location.replace(base + '/#/');
       }
     </script>
   </head>
   <body>
-    <p>Redirecting...</p>
   </body>
 </html>
